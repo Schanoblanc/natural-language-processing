@@ -45,32 +45,64 @@ def load_embeddings(embeddings_path):
     # Hint: you have already implemented a similar routine in the 3rd assignment.
     # Note that here you also need to know the dimension of the loaded embeddings.
     # When you load the embeddings, use numpy.float32 type as dtype
-
+    embeddings = {}
+    print('debug hit')
+    for line in open(embeddings_path,'r',encoding="utf-8"):
+        line = line.replace("\n","") # remove the last \n in the end of each line
+        terms = line.split("\t") # tsv is tab-separated-value so split by tab
+        word_key = terms[0] # the first term is the word
+        string_vector = terms[1:]
+        vector = np.array(string_vector,dtype = np.float32)
+        embeddings[word_key] = vector
+    
+    first_key = next(iter(embeddings.keys()))
+    first_vector = embeddings[first_key]
+    embeddings_dim = len(first_vector)
+    
+    return embeddings,embeddings_dim
     ########################
     #### YOUR CODE HERE ####
     ########################
 
     # remove this when you're done
-    raise NotImplementedError(
-        "Open utils.py and fill with your code. In case of Google Colab, download"
-        "(https://github.com/hse-aml/natural-language-processing/blob/master/project/utils.py), "
-        "edit locally and upload using '> arrow on the left edge' -> Files -> UPLOAD")
+    #raise NotImplementedError(
+    #    "Open utils.py and fill with your code. In case of Google Colab, download"
+    #    "(https://github.com/hse-aml/natural-language-processing/blob/master/project/utils.py), "
+    #    "edit locally and upload using '> arrow on the left edge' -> Files -> UPLOAD")
 
 
 def question_to_vec(question, embeddings, dim):
     """Transforms a string to an embedding by averaging word embeddings."""
     
     # Hint: you have already implemented exactly this function in the 3rd assignment.
+    ## copy from week 3
+    """
+        question: a string
+        embeddings: dict where the key is a word and a value is its' embedding
+        dim: size of the representation
 
+        result: vector representation for the question
+    """
+    words = question.split(' ')
+    count = 0
+    result = np.zeros([1,dim])
+    for word in words:
+        if word in embeddings:
+            count += 1
+            result = result + embeddings[word]
+    
+    if count > 0:
+        result = result / count
+    return result
     ########################
     #### YOUR CODE HERE ####
     ########################
 
-    # remove this when you're done
-    raise NotImplementedError(
-        "Open utils.py and fill with your code. In case of Google Colab, download"
-        "(https://github.com/hse-aml/natural-language-processing/blob/master/project/utils.py), "
-        "edit locally and upload using '> arrow on the left edge' -> Files -> UPLOAD")
+    # # remove this when you're done
+    # raise NotImplementedError(
+    #     "Open utils.py and fill with your code. In case of Google Colab, download"
+    #     "(https://github.com/hse-aml/natural-language-processing/blob/master/project/utils.py), "
+    #     "edit locally and upload using '> arrow on the left edge' -> Files -> UPLOAD")
 
 
 def unpickle_file(filename):
